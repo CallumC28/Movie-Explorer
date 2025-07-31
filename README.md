@@ -94,8 +94,6 @@ VITE_TMDB_API_KEY=your_tmdb_api_key
 VITE_OPENAI_API_KEY=your_openai_api_key
 ```
 
-> ⚠️ Dont commit `.env` to GitHub. Use Vercel’s Environment Variables section for deployment.
-
 ---
 
 ## Deployment
