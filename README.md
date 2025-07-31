@@ -17,9 +17,7 @@
 ---
 
 ## Screenshots
-
-*(Add screenshots here or paste Vercel live link demo)*
-
+Link - https://movie-explorer-tau-lemon.vercel.app/movie/1136867
 ---
 
 ## Tech Stack
