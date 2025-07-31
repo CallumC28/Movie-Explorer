@@ -1,10 +1,11 @@
+
 # 🎬 Movie Explorer
 
 **Movie Explorer** is a modern React web app that allows users to discover trending, top-rated, and obscure movies using the TMDB API. It includes AI-powered movie summaries using OpenAI and a user-friendly interface built with Tailwind CSS.
 
 ---
 
-## Features
+## ✨ Features
 
 - 🔍 **Search movies** by name with instant filtering
 - 🧠 **AI summaries**: GPT-powered bullet-point summaries of each movie
@@ -14,12 +15,13 @@
 
 ---
 
-## Live site hosted on Vercel
-Link - https://movie-explorer-tau-lemon.vercel.app/movie/1136867
+## 📸 Screenshots
+
+*(Add screenshots here or paste Vercel live link demo)*
 
 ---
 
-## Tech Stack
+## 🔧 Tech Stack
 
 | Layer | Tech |
 |-------|------|
@@ -30,7 +32,7 @@ Link - https://movie-explorer-tau-lemon.vercel.app/movie/1136867
 
 ---
 
-## Dependencies
+## 📦 Dependencies
 
 ### Core Frameworks & Libraries
 
@@ -71,3 +73,72 @@ Link - https://movie-explorer-tau-lemon.vercel.app/movie/1136867
 
 ---
 
+## 🧱 Project Structure Overview
+
+```
+movie_explorer/
+├── client/
+│   ├── public/                # index.html
+│   ├── src/
+│   │   ├── components/        # SearchBar, MovieCard, etc.
+│   │   ├── pages/             # Home.jsx, MovieDetail.jsx
+│   │   ├── services/          # TMDB and OpenAI logic
+│   │   ├── styles/            # Tailwind global styles
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   └── .env                   # VITE_TMDB_API_KEY & VITE_OPENAI_API_KEY
+```
+
+---
+
+## 🧠 Environment Variables
+
+Create a `.env` file inside the `client/` folder with:
+
+```
+VITE_TMDB_API_KEY=your_tmdb_api_key
+VITE_OPENAI_API_KEY=your_openai_api_key
+```
+
+> ⚠️ Never commit `.env` to GitHub. Use Vercel’s Environment Variables section for deployment.
+
+---
+
+## ▶️ Running Locally
+
+1. **Clone the repo**
+   ```bash
+   git clone https://github.com/yourusername/movie-explorer.git
+   cd movie-explorer/client
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Start dev server**
+   ```bash
+   npm run dev
+   ```
+
+4. Open [http://localhost:5173](http://localhost:5173)
+
+---
+
+## 🌍 Deployment
+
+Deployed on **Vercel**  
+➤ [Live Demo](https://movie-explorer-tau-lemon.vercel.app/)
+
+---
+
+## 📌 Future Improvements
+
+- Authenticated user accounts
+- Save ratings and watchlist to a backend
+- Genre filters and custom movie recommendations
+- Infinite scroll on search results
+- Dark/light theme toggle
+
+-
