@@ -5,7 +5,7 @@
 
 ---
 
-## ✨ Features
+## Features
 
 - 🔍 **Search movies** by name with instant filtering
 - 🧠 **AI summaries**: GPT-powered bullet-point summaries of each movie
@@ -15,13 +15,7 @@
 
 ---
 
-## 📸 Screenshots
-
-*(Add screenshots here or paste Vercel live link demo)*
-
----
-
-## 🔧 Tech Stack
+## Tech Stack
 
 | Layer | Tech |
 |-------|------|
@@ -32,7 +26,7 @@
 
 ---
 
-## 📦 Dependencies
+## Dependencies
 
 ### Core Frameworks & Libraries
 
@@ -73,7 +67,7 @@
 
 ---
 
-## 🧱 Project Structure Overview
+## Project Structure Overview
 
 ```
 movie_explorer/
@@ -91,7 +85,7 @@ movie_explorer/
 
 ---
 
-## 🧠 Environment Variables
+## Environment Variables
 
 Create a `.env` file inside the `client/` folder with:
 
@@ -100,45 +94,21 @@ VITE_TMDB_API_KEY=your_tmdb_api_key
 VITE_OPENAI_API_KEY=your_openai_api_key
 ```
 
-> ⚠️ Never commit `.env` to GitHub. Use Vercel’s Environment Variables section for deployment.
+> ⚠️ Dont commit `.env` to GitHub. Use Vercel’s Environment Variables section for deployment.
 
 ---
 
-## ▶️ Running Locally
-
-1. **Clone the repo**
-   ```bash
-   git clone https://github.com/yourusername/movie-explorer.git
-   cd movie-explorer/client
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Start dev server**
-   ```bash
-   npm run dev
-   ```
-
-4. Open [http://localhost:5173](http://localhost:5173)
-
----
-
-## 🌍 Deployment
+## Deployment
 
 Deployed on **Vercel**  
 ➤ [Live Demo](https://movie-explorer-tau-lemon.vercel.app/)
 
 ---
 
-## 📌 Future Improvements
+## Future Improvements
 
 - Authenticated user accounts
 - Save ratings and watchlist to a backend
 - Genre filters and custom movie recommendations
 - Infinite scroll on search results
 - Dark/light theme toggle
-
--
