@@ -31,3 +31,45 @@ Link - https://movie-explorer-tau-lemon.vercel.app/movie/1136867
 | Dev Tools | Vite, Axios |
 
 ---
+
+## Dependencies
+
+### Core Frameworks & Libraries
+
+| Package | Description |
+|--------|-------------|
+| [`react`](https://reactjs.org/) | JavaScript library for building user interfaces |
+| [`react-dom`](https://reactjs.org/docs/react-dom.html) | Provides DOM-specific methods for React |
+| [`react-router-dom`](https://reactrouter.com/) | Declarative routing for React apps |
+| [`vite`](https://vitejs.dev/) | Fast development build tool and dev server |
+
+---
+
+### Styling
+
+| Package | Description |
+|--------|-------------|
+| [`tailwindcss`](https://tailwindcss.com/) | Utility-first CSS framework for fast UI styling |
+| [`postcss`](https://postcss.org/) | Used with Tailwind for processing CSS |
+| [`autoprefixer`](https://github.com/postcss/autoprefixer) | Adds vendor prefixes to CSS automatically |
+
+---
+
+### APIs & External Services
+
+| API | Description |
+|-----|-------------|
+| [TMDB API](https://developer.themoviedb.org/docs) | Fetches trending, top-rated, and detailed movie data |
+| [OpenAI API](https://platform.openai.com/docs) | Provides GPT-3.5 model for AI-generated movie summaries |
+
+---
+
+### Dev Dependencies
+
+| Package | Description |
+|--------|-------------|
+| [`@vitejs/plugin-react`](https://www.npmjs.com/package/@vitejs/plugin-react) | Official React plugin for Vite |
+| [`eslint`](https://eslint.org/) *(optional)* | Linter for catching JavaScript errors |
+
+---
+
