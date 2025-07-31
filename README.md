@@ -16,8 +16,9 @@
 
 ---
 
-## Screenshots
+## Live site hosted on Vercel
 Link - https://movie-explorer-tau-lemon.vercel.app/movie/1136867
+
 ---
 
 ## Tech Stack
