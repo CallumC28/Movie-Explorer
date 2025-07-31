@@ -10,8 +10,6 @@
 - 🧠 **AI summaries**: GPT-powered bullet-point summaries of each movie
 - 🏆 **Trending & top-rated** listings from TMDB
 - 🖼️ Responsive **movie cards** with posters, titles, and ratings
-- ❤️ Add movies to **your watchlist**
-- ⭐ Leave a **star rating**
 - 🚀 Smooth routing and UI animations
 
 ---
