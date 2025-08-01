@@ -71,8 +71,7 @@
 
 ```
 movie_explorer/
-├── client/
-│   ├── public/                # index.html
+├── client/              
 │   ├── src/
 │   │   ├── components/        # SearchBar, MovieCard, etc.
 │   │   ├── pages/             # Home.jsx, MovieDetail.jsx
@@ -80,7 +79,8 @@ movie_explorer/
 │   │   ├── styles/            # Tailwind global styles
 │   │   ├── App.jsx
 │   │   └── main.jsx
-│   └── .env                   # VITE_TMDB_API_KEY & VITE_OPENAI_API_KEY
+│   ├── index.html  
+|   └── .env                   # VITE_TMDB_API_KEY & VITE_OPENAI_API_KEY
 ```
 
 ---
