@@ -107,6 +107,6 @@ Deployed on **Vercel**
 
 - Authenticated user accounts
 - Save ratings and watchlist to a backend
-- Genre filters and custom movie recommendations
+- Custom movie recommendations
 - Infinite scroll on search results
 - Dark/light theme toggle
