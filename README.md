@@ -110,3 +110,4 @@ Deployed on **Vercel**
 - Custom movie recommendations
 - Infinite scroll on search results
 - Dark/light theme toggle
+- Add option to view the trailer for the movie
