@@ -1,5 +1,5 @@
 
-# 🎬 Movie Explorer
+# Movie Explorer
 
 **Movie Explorer** is a modern React web app that allows users to discover trending, top-rated, and obscure movies using the TMDB API. It includes AI-powered movie summaries using OpenAI and a user-friendly interface built with Tailwind CSS.
 
@@ -7,11 +7,11 @@
 
 ## Features
 
-- 🔍 **Search movies** by name with instant filtering
-- 🧠 **AI summaries**: GPT-powered bullet-point summaries of each movie
-- 🏆 **Trending & top-rated** listings from TMDB
-- 🖼️ Responsive **movie cards** with posters, titles, and ratings
-- 🚀 Smooth routing and UI animations
+- **Search movies** by name with instant filtering
+- **AI summaries**: GPT-powered bullet-point summaries of each movie
+- **Trending & top-rated** listings from TMDB
+- Responsive **movie cards** with posters, titles, and ratings
+- Smooth routing and UI animations
 
 ---
 
