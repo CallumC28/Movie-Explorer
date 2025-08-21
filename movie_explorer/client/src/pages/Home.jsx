@@ -3,6 +3,7 @@ import { FixedSizeList as List } from 'react-window';
 import { getTrendingMovies, searchMovies, getGenres } from '../services/movieService';
 import MovieCard from '../components/MovieCard';
 import SearchBar from '../components/SearchBar';
+import { Link } from "react-router-dom"; // make sure this is imported
 
 /** Debounce helper */
 function useDebouncedValue(value, delay = 500) {
@@ -16,11 +17,11 @@ function useDebouncedValue(value, delay = 500) {
 
 /** Skeleton placeholder */
 const SkeletonCard = () => (
-  <div className="animate-pulse bg-slate-800 rounded-2xl overflow-hidden flex flex-col" aria-hidden="true">
-    <div className="h-64 bg-slate-700" />
+  <div className="animate-pulse bg-slate-800/70 ring-1 ring-white/5 rounded-2xl overflow-hidden flex flex-col shadow-lg" aria-hidden="true">
+    <div className="h-64 bg-slate-700/70" />
     <div className="p-4 space-y-2">
-      <div className="h-4 w-3/4 bg-slate-700 rounded" />
-      <div className="h-3 w-1/2 bg-slate-700 rounded" />
+      <div className="h-4 w-3/4 bg-slate-700/70 rounded" />
+      <div className="h-3 w-1/2 bg-slate-700/70 rounded" />
     </div>
   </div>
 );
@@ -38,91 +39,93 @@ const FilterBar = ({
   sortOption,
   setSortOption,
   resetFilters,
+  containerRef,
 }) => (
-  <div className="flex flex-wrap gap-4 items-end bg-slate-800 rounded-lg p-4 mb-6">
-    <div className="flex flex-col">
-      <label htmlFor="genre" className="text-xs text-slate-300 mb-1">
-        Genre
-      </label>
-      <select
-        id="genre"
-        value={selectedGenre}
-        onChange={(e) => setSelectedGenre(e.target.value)}
-        className="bg-slate-900 text-white px-3 py-2 rounded text-sm outline-none"
-      >
-        <option value="all">All</option>
-        {genres.map((g) => (
-          <option key={g.id} value={g.id}>
-            {g.name}
-          </option>
-        ))}
-      </select>
-    </div>
+  <div ref={containerRef} className="sticky top-[68px] z-10 rounded-xl border border-white/5 bg-slate-900/60 backdrop-blur-md p-4 md:p-5 shadow-lg">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div className="flex flex-col">
+        <label htmlFor="genre" className="text-[10px] uppercase tracking-wider text-slate-300/80 mb-1">
+          Genre
+        </label>
+        <select
+          id="genre"
+          value={selectedGenre}
+          onChange={(e) => setSelectedGenre(e.target.value)}
+          className="bg-slate-900/80 ring-1 ring-white/10 focus:ring-indigo-400/60 text-white px-3 py-2 rounded-lg text-sm outline-none"
+        >
+          <option value="all">All</option>
+          {genres.map((g) => (
+            <option key={g.id} value={g.id}>
+              {g.name}
+            </option>
+          ))}
+        </select>
+      </div>
 
-    <div className="flex flex-col">
-      <label htmlFor="year" className="text-xs text-slate-300 mb-1">
-        Release Year
-      </label>
-      <select
-        id="year"
-        value={selectedYear}
-        onChange={(e) => setSelectedYear(e.target.value)}
-        className="bg-slate-900 text-white px-3 py-2 rounded text-sm outline-none"
-      >
-        <option value="all">All</option>
-        {availableYears.map((y) => (
-          <option key={y} value={y}>
-            {y}
-          </option>
-        ))}
-      </select>
-    </div>
+      <div className="flex flex-col">
+        <label htmlFor="year" className="text-[10px] uppercase tracking-wider text-slate-300/80 mb-1">
+          Release Year
+        </label>
+        <select
+          id="year"
+          value={selectedYear}
+          onChange={(e) => setSelectedYear(e.target.value)}
+          className="bg-slate-900/80 ring-1 ring-white/10 focus:ring-indigo-400/60 text-white px-3 py-2 rounded-lg text-sm outline-none"
+        >
+          <option value="all">All</option>
+          {availableYears.map((y) => (
+            <option key={y} value={y}>
+              {y}
+            </option>
+          ))}
+        </select>
+      </div>
 
-    <div className="flex flex-col">
-      <label htmlFor="rating" className="text-xs text-slate-300 mb-1">
-        Min Rating
-      </label>
-      <select
-        id="rating"
-        value={minRating}
-        onChange={(e) => setMinRating(Number(e.target.value))}
-        className="bg-slate-900 text-white px-3 py-2 rounded text-sm outline-none"
-      >
-        <option value={0}>Any</option>
-        <option value={9}>9+</option>
-        <option value={8}>8+</option>
-        <option value={7}>7+</option>
-        <option value={6}>6+</option>
-        <option value={5}>5+</option>
-      </select>
-    </div>
+      <div className="flex flex-col">
+        <label htmlFor="rating" className="text-[10px] uppercase tracking-wider text-slate-300/80 mb-1">
+          Min Rating
+        </label>
+        <select
+          id="rating"
+          value={minRating}
+          onChange={(e) => setMinRating(Number(e.target.value))}
+          className="bg-slate-900/80 ring-1 ring-white/10 focus:ring-indigo-400/60 text-white px-3 py-2 rounded-lg text-sm outline-none"
+        >
+          <option value={0}>Any</option>
+          <option value={9}>9+</option>
+          <option value={8}>8+</option>
+          <option value={7}>7+</option>
+          <option value={6}>6+</option>
+          <option value={5}>5+</option>
+        </select>
+      </div>
 
-    <div className="flex flex-col flex-1 min-w-[160px]">
-      <label htmlFor="sort" className="text-xs text-slate-300 mb-1">
-        Sort By
-      </label>
-      <select
-        id="sort"
-        value={sortOption}
-        onChange={(e) => setSortOption(e.target.value)}
-        className="bg-slate-900 text-white px-3 py-2 rounded text-sm outline-none"
-      >
-        <option value="pop_desc">Popularity ↓</option>
-        <option value="pop_asc">Popularity ↑</option>
-        <option value="date_desc">Release Date ↓</option>
-        <option value="date_asc">Release Date ↑</option>
-        <option value="rating_desc">Rating ↓</option>
-        <option value="rating_asc">Rating ↑</option>
-      </select>
-    </div>
+      <div className="flex flex-col lg:col-span-2">
+        <label htmlFor="sort" className="text-[10px] uppercase tracking-wider text-slate-300/80 mb-1">
+          Sort By
+        </label>
+        <select
+          id="sort"
+          value={sortOption}
+          onChange={(e) => setSortOption(e.target.value)}
+          className="bg-slate-900/80 ring-1 ring-white/10 focus:ring-indigo-400/60 text-white px-3 py-2 rounded-lg text-sm outline-none"
+        >
+          <option value="pop_desc">Popularity ↓</option>
+          <option value="pop_asc">Popularity ↑</option>
+          <option value="date_desc">Release Date ↓</option>
+          <option value="date_asc">Release Date ↑</option>
+          <option value="rating_desc">Rating ↓</option>
+          <option value="rating_asc">Rating ↑</option>
+        </select>
+      </div>
 
-    <div className="ml-auto">
-      <button
-        onClick={resetFilters}
-        className="text-xs bg-slate-700 px-4 py-2 rounded hover:bg-slate-600 transition"
-      >
-        Reset
-      </button>
+      <div className="flex items-end">
+        <button
+          onClick={resetFilters}
+          className="w-full text-xs bg-slate-800/70 hover:bg-slate-700/80 active:bg-slate-700 rounded-lg px-3 py-2 ring-1 ring-white/10 transition shadow">
+          Reset
+        </button>
+      </div>
     </div>
   </div>
 );
@@ -206,6 +209,7 @@ function useColumnCount() {
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
   }, []);
+  if (width >= 1536) return 7;
   if (width >= 1280) return 6;
   if (width >= 1024) return 5;
   if (width >= 768) return 4;
@@ -213,12 +217,12 @@ function useColumnCount() {
   return 2;
 }
 
-/** Virtualized grid */
-const VirtualisedMovieGrid = ({ movies, hasMore, loadMore, loadingMore }) => {
+/** Virtualised grid that adapts to a given max height */
+const AutoSizeMovieGrid = ({ movies, hasMore, loadMore, loadingMore, maxHeight }) => {
   const columns = useColumnCount();
   const rowCount = Math.ceil(movies.length / columns);
-  const rowHeight = 360;
-  const listHeight = Math.min(rowCount * rowHeight, 800);
+  const rowHeight = 360; // keep card size consistent
+  const listHeight = Math.max(320, Math.min(rowCount * rowHeight, Math.floor(maxHeight || 800)));
 
   const itemData = useMemo(() => ({ movies, columns }), [movies, columns]);
 
@@ -230,9 +234,9 @@ const VirtualisedMovieGrid = ({ movies, hasMore, loadMore, loadingMore }) => {
     const empties = cols - rowItems.length;
 
     return (
-      <div style={style} className="flex gap-6 px-2">
+      <div style={style} className="flex gap-6 px-2 will-change-transform">
         {rowItems.map((m) => (
-          <div key={m.id} className="flex-1 min-w-0">
+          <div key={m.id} className="flex-1 min-w-0 transition-transform duration-300 hover:-translate-y-0.5">
             <MovieCard movie={m} />
           </div>
         ))}
@@ -268,6 +272,40 @@ const VirtualisedMovieGrid = ({ movies, hasMore, loadMore, loadingMore }) => {
   );
 };
 
+// Hooks to track viewport & element heights (responds to zoom via visualViewport)
+function useViewportSize() {
+  const get = () => ({
+    width: typeof window !== 'undefined' ? window.innerWidth : 1200,
+    height: typeof window !== 'undefined' ? window.innerHeight : 800,
+  });
+  const [size, setSize] = useState(get());
+  useEffect(() => {
+    const handler = () => setSize(get());
+    window.addEventListener('resize', handler);
+    const vv = window.visualViewport;
+    if (vv) vv.addEventListener('resize', handler);
+    return () => {
+      window.removeEventListener('resize', handler);
+      if (vv) vv.removeEventListener('resize', handler);
+    };
+  }, []);
+  return size;
+}
+
+function useElementSize(ref) {
+  const [rect, setRect] = useState({ width: 0, height: 0 });
+  useEffect(() => {
+    if (!ref.current) return;
+    const obs = new ResizeObserver((entries) => {
+      const cr = entries[0]?.contentRect;
+      if (cr) setRect({ width: cr.width, height: cr.height });
+    });
+    obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, [ref]);
+  return rect;
+}
+
 function Home() {
   const [search, setSearch] = useState('');
   const {
@@ -294,6 +332,13 @@ function Home() {
     setMinRating(0);
     setSortOption('pop_desc');
   }, []);
+
+  // measure dynamic areas
+  const headerRef = useRef(null);
+  const filtersRef = useRef(null);
+  const { height: headerH } = useElementSize(headerRef);
+  const { height: filtersH } = useElementSize(filtersRef);
+  const { height: viewportH } = useViewportSize();
 
   // load genres
   useEffect(() => {
@@ -375,46 +420,82 @@ function Home() {
     return movies.slice(0, 6);
   }, [movies, isSearching]);
 
+  const totalCount = filteredAndSorted.length;
+
+  // Compute available height for the list: viewport minus header + filters + spacing
+  const VERTICAL_MARGIN = 72; // rough padding/margins below sections
+  const gridMaxHeight = Math.max(320, viewportH - headerH - filtersH - VERTICAL_MARGIN);
+
   return (
-    <main className="min-h-screen w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
-      <div className="sticky top-0 z-20 py-3 mb-6 backdrop-blur-sm bg-slate-900/20 ">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 px-2">
-          <div className="flex items-center gap-3">
-            <div>
-              <h1 className="text-4xl font-extrabold m-0">Movie Explorer</h1>
-              <p className="text-xs text-slate-300 m-0">Find trending & hidden gems</p>
-            </div>
-          </div>
-          <div className="flex-1 max-w-md w-full">
-            <SearchBar search={search} setSearch={setSearch} placeholder="Search movies..." />
-          </div>
+    <main className="min-h-screen w-full bg-[radial-gradient(70%_40%_at_50%_-10%,rgba(99,102,241,0.25),transparent),radial-gradient(40%_30%_at_80%_20%,rgba(56,189,248,0.15),transparent)] bg-slate-950 text-white">
+      {/* Sticky header */}
+  <div
+    ref={headerRef}
+    className="sticky top-0 z-20 py-4 mb-6 border-b border-white/10 backdrop-blur-xl bg-slate-950/60"
+  >
+    <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 px-3">
+      {/* Left side: Logo + Title */}
+      <div className="flex items-center gap-3">
+        <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-indigo-500 to-cyan-400 shadow ring-1 ring-white/30" />
+        <div>
+          <h1 className="text-3xl md:text-4xl font-extrabold m-0 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">
+            Movie Explorer
+          </h1>
+          <p className="text-xs text-slate-300/80 m-0">Find trending & hidden gems</p>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto space-y-8">
+      {/* Middle: Search */}
+      <div className="flex-1 max-w-xl w-full">
+        <SearchBar search={search} setSearch={setSearch} placeholder="Search movies..." />
+      </div>
+
+      {/* Right side: Watchlist button */}
+      <div className="flex-shrink-0">
+        <Link
+          to="/watchlist"
+          className="rounded-full bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-md
+                     transition hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        >
+          My Watchlist
+        </Link>
+      </div>
+    </div>
+  </div>
+
+      
+
+      <div className="max-w-7xl mx-auto space-y-8 px-3">
+        {/* Search pill */}
         {isSearching && rawQuery && (
-          <div className="flex flex-wrap items-center gap-2 mb-2 px-2">
-            <div className="inline-flex items-center gap-2 bg-slate-800 px-4 py-2 rounded-full text-sm">
-              Showing results for <span className="font-semibold">&ldquo;{rawQuery}&rdquo;</span>
-              <button onClick={clearSearch} aria-label="Clear search" className="ml-2 bg-slate-700 hover:bg-slate-600 px-2 py-1 rounded">
+          <div className="flex flex-wrap items-center gap-2 mb-2">
+            <div className="inline-flex items-center gap-2 bg-slate-800/70 ring-1 ring-white/10 px-4 py-2 rounded-full text-sm shadow">
+              Showing <span className="font-semibold">“{rawQuery}”</span>
+              <span className="ml-2 text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/20 ring-1 ring-indigo-400/30">{totalCount}</span>
+              <button
+                onClick={clearSearch}
+                aria-label="Clear search"
+                className="ml-2 bg-slate-700/70 hover:bg-slate-600 px-2 py-1 rounded ring-1 ring-white/10"
+              >
                 ×
               </button>
             </div>
           </div>
         )}
 
+        {/* Featured Picks */}
         {!isSearching && featured.length > 0 && (
-          <section aria-label="Featured Picks" className="px-2 border-b border-slate-700 pb-4">
+          <section aria-label="Featured Picks" className="border border-white/5 rounded-2xl p-4 md:p-6 bg-slate-900/40 backdrop-blur-md shadow-xl">
             <div className="flex justify-between items-center mb-3">
               <div>
-                <h2 className="text-2xl font-semibold">Featured Picks</h2>
+                <h2 className="text-2xl font-semibold tracking-tight">Featured Picks</h2>
                 <p className="text-sm text-slate-400">Trending right now</p>
               </div>
             </div>
             <div className="relative overflow-x-auto no-scrollbar py-2">
               <div className="flex gap-6 min-w-[800px]">
                 {featured.map((m) => (
-                  <div key={m.id} className="shrink-0 w-[180px] md:w-[220px]">
+                  <div key={m.id} className="shrink-0 w-[180px] md:w-[220px] transition-transform duration-300 hover:-translate-y-0.5">
                     <MovieCard movie={m} />
                   </div>
                 ))}
@@ -423,7 +504,7 @@ function Home() {
           </section>
         )}
 
-        /* Filters */
+        {/* Filters */}
         <FilterBar
           genres={genres}
           availableYears={availableYears}
@@ -436,28 +517,31 @@ function Home() {
           sortOption={sortOption}
           setSortOption={setSortOption}
           resetFilters={resetFilters}
+          containerRef={filtersRef}
         />
+        {genreError && (
+          <p className="text-sm text-rose-300/80">{genreError}</p>
+        )}
 
-        /* Movie list */
-        <section aria-label="Movies list" className="px-2">
+        {/* Movie list */}
+        <section aria-label="Movies list">
           <div className="flex justify-between items-center mb-4">
             <div>
-              <h2 className="text-2xl font-semibold">
+              <h2 className="text-2xl font-semibold tracking-tight">
                 {isSearching
-                  ? filteredAndSorted.length
+                  ? totalCount
                     ? 'Results'
                     : 'No matches'
                   : 'Trending Movies'}
               </h2>
               {isSearching && rawQuery && (
                 <p className="text-sm text-slate-400 mt-1">
-                  Showing {filteredAndSorted.length} result
-                  {filteredAndSorted.length === 1 ? '' : 's'} for{' '}
-                  <span className="font-medium">&ldquo;{rawQuery}&rdquo;</span>
+                  Showing {totalCount} result{totalCount === 1 ? '' : 's'} for{' '}
+                  <span className="font-medium">“{rawQuery}”</span>
                 </p>
               )}
             </div>
-            {isSearching && rawQuery && filteredAndSorted.length === 0 && (
+            {isSearching && rawQuery && totalCount === 0 && (
               <button onClick={clearSearch} className="text-sm underline">
                 Reset
               </button>
@@ -465,7 +549,7 @@ function Home() {
           </div>
 
           {error && (
-            <div role="alert" className="mb-6 rounded-lg bg-red-900/70 px-4 py-3 text-sm flex items-center gap-2">
+            <div role="alert" className="mb-6 rounded-lg bg-rose-900/60 ring-1 ring-rose-500/30 px-4 py-3 text-sm flex items-center gap-2 shadow">
               <span className="font-medium">Error:</span> {error}
             </div>
           )}
@@ -476,13 +560,14 @@ function Home() {
                 <SkeletonCard key={i} />
               ))}
             </div>
-          ) : filteredAndSorted.length > 0 ? (
+          ) : totalCount > 0 ? (
             <>
-              <VirtualisedMovieGrid
+              <AutoSizeMovieGrid
                 movies={filteredAndSorted}
                 hasMore={hasMore}
                 loadMore={loadMore}
                 loadingMore={loadingMore}
+                maxHeight={gridMaxHeight}
               />
               {loadingMore && (
                 <div className="mt-6 flex justify-center">
@@ -505,7 +590,7 @@ function Home() {
               {isSearching && (
                 <button
                   onClick={clearSearch}
-                  className="mt-2 inline-flex items-center gap-2 bg-slate-700 px-4 py-2 rounded hover:bg-slate-600 transition"
+                  className="mt-2 inline-flex items-center gap-2 bg-slate-800/70 px-4 py-2 rounded-lg hover:bg-slate-700/80 ring-1 ring-white/10 transition shadow"
                 >
                   Reset search
                 </button>
@@ -513,6 +598,9 @@ function Home() {
             </div>
           )}
         </section>
+        <footer className="pt-4 pb-10 text-center text-xs text-slate-400/80">
+          Built for movie lovers
+        </footer>
       </div>
     </main>
   );
