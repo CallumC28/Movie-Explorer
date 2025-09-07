@@ -11,14 +11,17 @@ export const getMovieSummary = async (title, overview) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer YOUR_API_KEY'  
+        Authorization: `Bearer YOUR_API_KEY`,
       },
       body: JSON.stringify({
         model: 'gpt-3.5-turbo',
         messages: [
           {
             role: 'user',
-            content: `Summarise the movie "${title}" in 3 bullet points.\n\nOverview: ${overview}`,
+            content: `Summarise the movie "${title}" in 3 short bullet points. 
+      - Keep the tone engaging, like a teaser or movie poster. 
+      - Highlight the setting, main theme, and genre without revealing key plot twists or the ending. 
+      - Do not include spoilers.\n\nOverview: ${overview}`,
           },
         ],
         temperature: 0.7,
