@@ -3,7 +3,7 @@ import { FixedSizeList as List } from 'react-window';
 import { getTrendingMovies, searchMovies, getGenres } from '../services/movieService';
 import MovieCard from '../components/MovieCard';
 import SearchBar from '../components/SearchBar';
-import { Link } from "react-router-dom"; // make sure this is imported
+import { Link, useNavigate } from 'react-router-dom';
 
 /** Debounce helper */
 function useDebouncedValue(value, delay = 500) {
@@ -17,7 +17,10 @@ function useDebouncedValue(value, delay = 500) {
 
 /** Skeleton placeholder */
 const SkeletonCard = () => (
-  <div className="animate-pulse bg-slate-800/70 ring-1 ring-white/5 rounded-2xl overflow-hidden flex flex-col shadow-lg" aria-hidden="true">
+  <div
+    className="animate-pulse bg-slate-800/70 ring-1 ring-white/5 rounded-2xl overflow-hidden flex flex-col shadow-lg"
+    aria-hidden="true"
+  >
     <div className="h-64 bg-slate-700/70" />
     <div className="p-4 space-y-2">
       <div className="h-4 w-3/4 bg-slate-700/70 rounded" />
@@ -40,8 +43,34 @@ const FilterBar = ({
   setSortOption,
   resetFilters,
   containerRef,
+  onCloseMobile,
 }) => (
-  <div ref={containerRef} className="sticky top-[68px] z-10 rounded-xl border border-white/5 bg-slate-900/60 backdrop-blur-md p-4 md:p-5 shadow-lg">
+  <div
+    ref={containerRef}
+    className="sticky top-[72px] z-10 rounded-2xl border border-white/5 bg-slate-900/70 backdrop-blur-md p-4 md:p-5 shadow-2xl"
+    aria-labelledby="filters-heading"
+  >
+    <div className="flex items-center justify-between mb-3">
+      <h2 id="filters-heading" className="text-sm font-semibold tracking-wide text-slate-200">
+        Filters
+      </h2>
+      <div className="flex items-center gap-2">
+        <button
+          onClick={resetFilters}
+          className="text-xs px-3 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 active:bg-slate-700 ring-1 ring-white/10 shadow focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+        >
+          Reset
+        </button>
+        <button
+          onClick={onCloseMobile}
+          className="md:hidden text-xs px-3 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 ring-1 ring-white/10"
+          aria-label="Close filters"
+        >
+          Done
+        </button>
+      </div>
+    </div>
+
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
       <div className="flex flex-col">
         <label htmlFor="genre" className="text-[10px] uppercase tracking-wider text-slate-300/80 mb-1">
@@ -119,12 +148,8 @@ const FilterBar = ({
         </select>
       </div>
 
-      <div className="flex items-end">
-        <button
-          onClick={resetFilters}
-          className="w-full text-xs bg-slate-800/70 hover:bg-slate-700/80 active:bg-slate-700 rounded-lg px-3 py-2 ring-1 ring-white/10 transition shadow">
-          Reset
-        </button>
+      <div className="hidden lg:flex items-end lg:justify-end" aria-hidden>
+        {/* spacer */}
       </div>
     </div>
   </div>
@@ -155,9 +180,7 @@ function useMovieList(searchTerm) {
       else setLoadingMore(true);
       setError('');
       try {
-        const results = debounced
-          ? await searchMovies(debounced, page)
-          : await getTrendingMovies(page);
+        const results = debounced ? await searchMovies(debounced, page) : await getTrendingMovies(page);
         if (cancelled) return;
 
         if (!Array.isArray(results)) {
@@ -187,41 +210,33 @@ function useMovieList(searchTerm) {
     setPage((p) => p + 1);
   }, [hasMore, loadingMore, loadingInitial]);
 
-  return {
-    movies,
-    loadingInitial,
-    loadingMore,
-    error,
-    isSearching,
-    rawQuery: debounced,
-    hasMore,
-    loadMore,
-  };
+  return { movies, loadingInitial, loadingMore, error, isSearching, rawQuery: debounced, hasMore, loadMore };
 }
 
 /** Responsive column count util */
-function useColumnCount() {
-  const [width, setWidth] = useState(
-    typeof window !== 'undefined' ? window.innerWidth : 1200
-  );
+function useColumnCount(density = 'comfy') {
+  const [width, setWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
   useEffect(() => {
     const onResize = () => setWidth(window.innerWidth);
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
   }, []);
-  if (width >= 1536) return 7;
-  if (width >= 1280) return 6;
-  if (width >= 1024) return 5;
-  if (width >= 768) return 4;
-  if (width >= 640) return 3;
-  return 2;
+  // Slightly adjust by density: compact means more columns
+  const add = density === 'compact' ? 1 : density === 'spacious' ? -1 : 0;
+  if (width >= 1536) return Math.max(2, 7 + add);
+  if (width >= 1280) return Math.max(2, 6 + add);
+  if (width >= 1024) return Math.max(2, 5 + add);
+  if (width >= 768) return Math.max(2, 4 + add);
+  if (width >= 640) return Math.max(2, 3 + add);
+  return Math.max(2, 2 + add);
 }
 
 /** Virtualised grid that adapts to a given max height */
-const AutoSizeMovieGrid = ({ movies, hasMore, loadMore, loadingMore, maxHeight }) => {
-  const columns = useColumnCount();
-  const rowCount = Math.ceil(movies.length / columns);
-  const rowHeight = 360; // keep card size consistent
+const AutoSizeMovieGrid = ({ movies, hasMore, loadMore, loadingMore, maxHeight, density = 'comfy' }) => {
+  const columns = useColumnCount(density);
+  const rowCount = Math.ceil((movies?.length || 0) / columns);
+  const base = density === 'compact' ? 300 : density === 'spacious' ? 420 : 360;
+  const rowHeight = base; // keep card size consistent
   const listHeight = Math.max(320, Math.min(rowCount * rowHeight, Math.floor(maxHeight || 800)));
 
   const itemData = useMemo(() => ({ movies, columns }), [movies, columns]);
@@ -236,14 +251,13 @@ const AutoSizeMovieGrid = ({ movies, hasMore, loadMore, loadingMore, maxHeight }
     return (
       <div style={style} className="flex gap-6 px-2 will-change-transform">
         {rowItems.map((m) => (
-          <div key={m.id} className="flex-1 min-w-0 transition-transform duration-300 hover:-translate-y-0.5">
+          <div key={m.id} className="flex-1 min-w-0 transition-transform duration-300 motion-safe:hover:-translate-y-0.5">
             <MovieCard movie={m} />
           </div>
         ))}
-        {empties > 0 &&
-          Array.from({ length: empties }).map((_, i) => (
-            <div key={`empty-${i}`} className="flex-1 min-w-0" aria-hidden="true" />
-          ))}
+        {empties > 0 && Array.from({ length: empties }).map((_, i) => (
+          <div key={`empty-${i}`} className="flex-1 min-w-0" aria-hidden="true" />
+        ))}
       </div>
     );
   };
@@ -274,10 +288,7 @@ const AutoSizeMovieGrid = ({ movies, hasMore, loadMore, loadingMore, maxHeight }
 
 // Hooks to track viewport & element heights (responds to zoom via visualViewport)
 function useViewportSize() {
-  const get = () => ({
-    width: typeof window !== 'undefined' ? window.innerWidth : 1200,
-    height: typeof window !== 'undefined' ? window.innerHeight : 800,
-  });
+  const get = () => ({ width: typeof window !== 'undefined' ? window.innerWidth : 1200, height: typeof window !== 'undefined' ? window.innerHeight : 800 });
   const [size, setSize] = useState(get());
   useEffect(() => {
     const handler = () => setSize(get());
@@ -307,31 +318,49 @@ function useElementSize(ref) {
 }
 
 function Home() {
+  const navigate = useNavigate();
   const [search, setSearch] = useState('');
-  const {
-    movies,
-    loadingInitial,
-    loadingMore,
-    error,
-    isSearching,
-    rawQuery,
-    hasMore,
-    loadMore,
-  } = useMovieList(search);
+  const { movies, loadingInitial, loadingMore, error, isSearching, rawQuery, hasMore, loadMore } = useMovieList(search);
 
   const [genres, setGenres] = useState([]);
   const [genreError, setGenreError] = useState('');
   const [selectedGenre, setSelectedGenre] = useState('all');
   const [selectedYear, setSelectedYear] = useState('all');
   const [minRating, setMinRating] = useState(0);
-  const [sortOption, setSortOption] = useState('pop_desc');
+  const [sortOption, setSortOption] = useState(() => localStorage.getItem('mx_sort') || 'pop_desc');
+  const [density, setDensity] = useState(() => localStorage.getItem('mx_density') || 'comfy'); // compact  comfy  spacious
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const clearSearch = useCallback(() => setSearch(''), []);
   const resetFilters = useCallback(() => {
     setSelectedGenre('all');
     setSelectedYear('all');
     setMinRating(0);
     setSortOption('pop_desc');
+    localStorage.removeItem('mx_sort');
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem('mx_sort', sortOption);
+  }, [sortOption]);
+  useEffect(() => {
+    localStorage.setItem('mx_density', density);
+  }, [density]);
+
+  // keyboard shortcuts: "/" focus search, "r" reset filters
+  const searchRef = useRef(null);
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === '/' && !e.metaKey && !e.ctrlKey) {
+        e.preventDefault();
+        const el = document.querySelector('input[type="search"], input[placeholder^="Search"]');
+        if (el) el.focus();
+      } else if ((e.key === 'r' || e.key === 'R') && (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA')) {
+        resetFilters();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [resetFilters]);
 
   // measure dynamic areas
   const headerRef = useRef(null);
@@ -358,8 +387,8 @@ function Home() {
   // derive years from movies
   const availableYears = useMemo(() => {
     const set = new Set();
-    movies.forEach((m) => {
-      if (m.release_date) {
+    (movies || []).forEach((m) => {
+      if (m?.release_date) {
         set.add(m.release_date.slice(0, 4));
       }
     });
@@ -368,9 +397,9 @@ function Home() {
       .sort((a, b) => b - a);
   }, [movies]);
 
-  // apply client-side filters + sort
+  // apply client side filters + sort
   const filteredAndSorted = useMemo(() => {
-    let filtered = movies;
+    let filtered = movies || [];
 
     if (selectedGenre !== 'all') {
       filtered = filtered.filter((m) => {
@@ -383,7 +412,7 @@ function Home() {
       filtered = filtered.filter((m) => m.release_date?.startsWith(selectedYear));
     }
     if (minRating > 0) {
-      filtered = filtered.filter((m) => m.vote_average >= minRating);
+      filtered = filtered.filter((m) => (m.vote_average || 0) >= minRating);
     }
 
     const sorted = filtered.slice();
@@ -417,71 +446,175 @@ function Home() {
   // featured picks (when not searching)
   const featured = useMemo(() => {
     if (isSearching) return [];
-    return movies.slice(0, 6);
+    return (movies || []).slice(0, 6);
   }, [movies, isSearching]);
 
   const totalCount = filteredAndSorted.length;
 
   // Compute available height for the list: viewport minus header + filters + spacing
-  const VERTICAL_MARGIN = 72; // rough padding/margins below sections
+  const VERTICAL_MARGIN = 96; // increased to account for hero spacing
   const gridMaxHeight = Math.max(320, viewportH - headerH - filtersH - VERTICAL_MARGIN);
 
   return (
     <main className="min-h-screen w-full bg-[radial-gradient(70%_40%_at_50%_-10%,rgba(99,102,241,0.25),transparent),radial-gradient(40%_30%_at_80%_20%,rgba(56,189,248,0.15),transparent)] bg-slate-950 text-white">
+      {/* Skip link for accessibility */}
+      <a
+        href="#content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:bg-slate-900 focus:ring-2 focus:ring-indigo-400 focus:rounded-lg"
+      >
+        Skip to content
+      </a>
+
       {/* Sticky header */}
-  <div
-    ref={headerRef}
-    className="sticky top-0 z-20 py-4 mb-6 border-b border-white/10 backdrop-blur-xl bg-slate-950/60"
-  >
-    <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 px-3">
-      {/* Left side: Logo + Title */}
-      <div className="flex items-center gap-3">
-        <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-indigo-500 to-cyan-400 shadow ring-1 ring-white/30" />
-        <div>
-          <h1 className="text-3xl md:text-4xl font-extrabold m-0 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">
-            Movie Explorer
-          </h1>
-          <p className="text-xs text-slate-300/80 m-0">Find trending & hidden gems</p>
+      <div
+        ref={headerRef}
+        className="sticky top-0 z-30 py-2 md:py-3 mb-6 border-b border-white/10 backdrop-blur-xl bg-slate-950/70 supports-[backdrop-filter]:bg-slate-950/50"
+      >
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 px-3">
+          {/* Left: Brand */}
+          <Link to="/" className="group flex items-center gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 rounded-xl">
+            <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-indigo-500 to-cyan-400 shadow ring-1 ring-white/30 transition-transform group-hover:rotate-3" />
+            <div className="leading-tight">
+              <span className="block text-xl md:text-2xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">
+                Movie Explorer
+              </span>
+              <span className="block text-[11px] text-slate-300/80">Trending & hidden gems</span>
+            </div>
+          </Link>
+
+          {/* Middle: Search */}
+          <div className="flex-1 max-w-xl w-full">
+            <SearchBar ref={searchRef} search={search} setSearch={setSearch} placeholder="Search movies... (/ to focus)" />
+          </div>
+
+          {/* Right: Actions */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setFiltersOpen(true)}
+              className="md:hidden rounded-full bg-slate-800/80 px-3 py-2 text-xs ring-1 ring-white/10"
+              aria-label="Open filters"
+            >
+              Filters
+            </button>
+            <Link
+              to="/watchlist"
+              className="rounded-full bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-md transition hover:bg-indigo-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+            >
+              My Watchlist
+            </Link>
+          </div>
         </div>
       </div>
 
-      {/* Middle: Search */}
-      <div className="flex-1 max-w-xl w-full">
-        <SearchBar search={search} setSearch={setSearch} placeholder="Search movies..." />
-      </div>
+      {/* Hero / headline strip */}
+      {!isSearching && (
+        <section className="mx-auto max-w-7xl px-3 mb-4">
+          <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-r from-slate-900/80 via-slate-900/60 to-slate-900/80 p-6 md:p-8 shadow-2xl">
+            <div className="relative z-10 grid md:grid-cols-2 gap-6 items-center">
+              <div>
+                <h1 className="text-3xl md:text-4xl font-black tracking-tight">Discover films everyone’s talking about</h1>
+                <p className="mt-2 text-slate-300/90 md:text-base text-sm">Browse trending titles, filter by genre, and surface hidden gems. All in a single, blazing-fast view.</p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <a href="#movies" className="rounded-full bg-white text-slate-900 text-sm font-semibold px-4 py-2 shadow hover:shadow-lg transition">Explore trending</a>
+                  <button
+                    onClick={() => {
+                      if ((movies || []).length) {
+                        const r = movies[Math.floor(Math.random() * movies.length)];
+                        if (r?.id) navigate(`/movie/${r.id}`);
+                      }
+                    }}
+                    className="rounded-full bg-slate-800/80 text-white text-sm font-medium px-4 py-2 ring-1 ring-white/10 hover:bg-slate-700/80"
+                  >
+                    Surprise me
+                  </button>
+                </div>
+              </div>
+              <ul className="hidden md:flex flex-wrap gap-2 justify-end">
+                {genres.slice(0, 12).map((g) => (
+                  <li key={g.id}>
+                    <button
+                      onClick={() => setSelectedGenre(String(g.id))}
+                      className={`px-3 py-1.5 rounded-full text-xs ring-1 ring-white/10 hover:ring-indigo-400/50 hover:bg-indigo-500/10 transition ${String(selectedGenre) === String(g.id) ? 'bg-indigo-600 text-white' : 'bg-slate-800/60 text-slate-200'}`}
+                    >
+                      {g.name}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div aria-hidden className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-indigo-500/20 blur-3xl" />
+            <div aria-hidden className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-cyan-400/20 blur-3xl" />
+          </div>
+        </section>
+      )}
 
-      {/* Right side: Watchlist button */}
-      <div className="flex-shrink-0">
-        <Link
-          to="/watchlist"
-          className="rounded-full bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-md
-                     transition hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-        >
-          My Watchlist
-        </Link>
-      </div>
-    </div>
-  </div>
+      <div id="content" className="max-w-7xl mx-auto space-y-8 px-3">
+        {/* Mobile filter drawer */}
+        {filtersOpen && <div className="md:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm" onClick={() => setFiltersOpen(false)} />}
+        <div className={`md:hidden fixed z-50 inset-y-0 right-0 w-80 max-w-[85vw] bg-slate-950 border-l border-white/10 transform transition-transform ${filtersOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+          <div className="h-full overflow-y-auto p-4">
+            <FilterBar
+              genres={genres}
+              availableYears={availableYears}
+              selectedGenre={selectedGenre}
+              setSelectedGenre={setSelectedGenre}
+              selectedYear={selectedYear}
+              setSelectedYear={setSelectedYear}
+              minRating={minRating}
+              setMinRating={setMinRating}
+              sortOption={sortOption}
+              setSortOption={setSortOption}
+              resetFilters={resetFilters}
+              containerRef={{ current: null }}
+              onCloseMobile={() => setFiltersOpen(false)}
+            />
+          </div>
+        </div>
 
-      
-
-      <div className="max-w-7xl mx-auto space-y-8 px-3">
-        {/* Search pill */}
-        {isSearching && rawQuery && (
-          <div className="flex flex-wrap items-center gap-2 mb-2">
-            <div className="inline-flex items-center gap-2 bg-slate-800/70 ring-1 ring-white/10 px-4 py-2 rounded-full text-sm shadow">
-              Showing <span className="font-semibold">“{rawQuery}”</span>
-              <span className="ml-2 text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/20 ring-1 ring-indigo-400/30">{totalCount}</span>
-              <button
-                onClick={clearSearch}
-                aria-label="Clear search"
-                className="ml-2 bg-slate-700/70 hover:bg-slate-600 px-2 py-1 rounded ring-1 ring-white/10"
-              >
-                ×
-              </button>
+        {/* Toolbar */}
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-slate-300/80">View</span>
+            <div className="inline-flex rounded-full ring-1 ring-white/10 overflow-hidden bg-slate-900/70">
+              {['compact', 'comfy', 'spacious'].map((d) => (
+                <button
+                  key={d}
+                  onClick={() => setDensity(d)}
+                  className={`px-3 py-1.5 text-xs capitalize ${density === d ? 'bg-indigo-600 text-white' : 'text-slate-200 hover:bg-slate-800/60'}`}
+                  aria-pressed={density === d}
+                >
+                  {d}
+                </button>
+              ))}
             </div>
           </div>
-        )}
+
+          <div className="hidden md:block flex-1" />
+
+          <div className="flex items-center gap-2">
+            <button onClick={() => setFiltersOpen(true)} className="md:hidden rounded-full bg-slate-800/80 px-3 py-2 text-xs ring-1 ring-white/10">Filters</button>
+            <span className="text-xs text-slate-400">{totalCount} title{totalCount === 1 ? '' : 's'}</span>
+          </div>
+        </div>
+
+        {/* Desktop Filters */}
+        <div className="hidden md:block" ref={filtersRef}>
+          <FilterBar
+            genres={genres}
+            availableYears={availableYears}
+            selectedGenre={selectedGenre}
+            setSelectedGenre={setSelectedGenre}
+            selectedYear={selectedYear}
+            setSelectedYear={setSelectedYear}
+            minRating={minRating}
+            setMinRating={setMinRating}
+            sortOption={sortOption}
+            setSortOption={setSortOption}
+            resetFilters={resetFilters}
+            containerRef={filtersRef}
+          />
+        </div>
+        {genreError && <p className="text-sm text-rose-300/80">{genreError}</p>}
 
         {/* Featured Picks */}
         {!isSearching && featured.length > 0 && (
@@ -495,7 +628,7 @@ function Home() {
             <div className="relative overflow-x-auto no-scrollbar py-2">
               <div className="flex gap-6 min-w-[800px]">
                 {featured.map((m) => (
-                  <div key={m.id} className="shrink-0 w-[180px] md:w-[220px] transition-transform duration-300 hover:-translate-y-0.5">
+                  <div key={m.id} className="shrink-0 w-[180px] md:w-[220px] transition-transform duration-300 motion-safe:hover:-translate-y-0.5">
                     <MovieCard movie={m} />
                   </div>
                 ))}
@@ -504,47 +637,17 @@ function Home() {
           </section>
         )}
 
-        {/* Filters */}
-        <FilterBar
-          genres={genres}
-          availableYears={availableYears}
-          selectedGenre={selectedGenre}
-          setSelectedGenre={setSelectedGenre}
-          selectedYear={selectedYear}
-          setSelectedYear={setSelectedYear}
-          minRating={minRating}
-          setMinRating={setMinRating}
-          sortOption={sortOption}
-          setSortOption={setSortOption}
-          resetFilters={resetFilters}
-          containerRef={filtersRef}
-        />
-        {genreError && (
-          <p className="text-sm text-rose-300/80">{genreError}</p>
-        )}
-
         {/* Movie list */}
-        <section aria-label="Movies list">
+        <section id="movies" aria-label="Movies list">
           <div className="flex justify-between items-center mb-4">
             <div>
-              <h2 className="text-2xl font-semibold tracking-tight">
-                {isSearching
-                  ? totalCount
-                    ? 'Results'
-                    : 'No matches'
-                  : 'Trending Movies'}
-              </h2>
+              <h2 className="text-2xl font-semibold tracking-tight">{isSearching ? (totalCount ? 'Results' : 'No matches') : 'Trending Movies'}</h2>
               {isSearching && rawQuery && (
-                <p className="text-sm text-slate-400 mt-1">
-                  Showing {totalCount} result{totalCount === 1 ? '' : 's'} for{' '}
-                  <span className="font-medium">“{rawQuery}”</span>
-                </p>
+                <p className="text-sm text-slate-400 mt-1">Showing {totalCount} result{totalCount === 1 ? '' : 's'} for <span className="font-medium">“{rawQuery}”</span></p>
               )}
             </div>
             {isSearching && rawQuery && totalCount === 0 && (
-              <button onClick={clearSearch} className="text-sm underline">
-                Reset
-              </button>
+              <button onClick={clearSearch} className="text-sm underline focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 rounded">Reset</button>
             )}
           </div>
 
@@ -562,35 +665,21 @@ function Home() {
             </div>
           ) : totalCount > 0 ? (
             <>
-              <AutoSizeMovieGrid
-                movies={filteredAndSorted}
-                hasMore={hasMore}
-                loadMore={loadMore}
-                loadingMore={loadingMore}
-                maxHeight={gridMaxHeight}
-              />
+              <AutoSizeMovieGrid movies={filteredAndSorted} hasMore={hasMore} loadMore={loadMore} loadingMore={loadingMore} maxHeight={gridMaxHeight} density={density} />
               {loadingMore && (
-                <div className="mt-6 flex justify-center">
+                <div className="mt-6 flex justify-center" aria-live="polite" role="status">
                   <SkeletonCard />
                 </div>
               )}
-              {!hasMore && (
-                <div className="mt-6 text-center text-sm text-slate-400">
-                  You’ve reached the end.
-                </div>
-              )}
+              {!hasMore && <div className="mt-6 text-center text-sm text-slate-400">You’ve reached the end.</div>}
             </>
           ) : (
             <div className="text-center text-slate-300 py-16">
-              <p className="mb-3 text-lg">
-                {isSearching
-                  ? `No movies found for "${rawQuery}".`
-                  : 'No movies available at the moment.'}
-              </p>
+              <p className="mb-3 text-lg">{isSearching ? `No movies found for "${rawQuery}".` : 'No movies available at the moment.'}</p>
               {isSearching && (
                 <button
                   onClick={clearSearch}
-                  className="mt-2 inline-flex items-center gap-2 bg-slate-800/70 px-4 py-2 rounded-lg hover:bg-slate-700/80 ring-1 ring-white/10 transition shadow"
+                  className="mt-2 inline-flex items-center gap-2 bg-slate-800/70 px-4 py-2 rounded-lg hover:bg-slate-700/80 ring-1 ring-white/10 transition shadow focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
                 >
                   Reset search
                 </button>
@@ -598,10 +687,18 @@ function Home() {
             </div>
           )}
         </section>
-        <footer className="pt-4 pb-10 text-center text-xs text-slate-400/80">
-          Built for movie lovers
-        </footer>
+
+        <footer className="pt-6 pb-10 text-center text-xs text-slate-400/80">Built for movie lovers • <span className="opacity-70">Press "/" to search</span></footer>
       </div>
+
+      {/* Back to top */}
+      <button
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        className="fixed bottom-6 right-6 rounded-full bg-slate-900/80 ring-1 ring-white/10 px-4 py-2 text-xs shadow-lg hover:bg-slate-800/80"
+        aria-label="Back to top"
+      >
+        ↑ Top
+      </button>
     </main>
   );
 }
