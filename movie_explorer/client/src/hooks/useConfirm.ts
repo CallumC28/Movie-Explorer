@@ -1,4 +1,4 @@
-import { App } from 'antd';
+import { App } from "antd";
 
 interface ConfirmOptions {
   title: string;
@@ -17,13 +17,19 @@ interface ConfirmOptions {
 export function useConfirm() {
   const { modal } = App.useApp();
 
-  return ({ title, content, okText = 'Confirm', danger, onOk }: ConfirmOptions) =>
+  return ({
+    title,
+    content,
+    okText = "Confirm",
+    danger,
+    onOk,
+  }: ConfirmOptions) =>
     modal.confirm({
       centered: true,
       title,
       content,
       okText,
-      cancelText: 'Cancel',
+      cancelText: "Cancel",
       okButtonProps: danger ? { danger: true } : undefined,
       onOk,
     });

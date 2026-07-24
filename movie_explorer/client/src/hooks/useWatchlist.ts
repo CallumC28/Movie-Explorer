@@ -1,12 +1,12 @@
-import { useCallback, useSyncExternalStore } from 'react';
-import type { Movie } from '@/api/types';
+import { useCallback, useSyncExternalStore } from "react";
+import type { Movie } from "@/api/types";
 
-const KEY = 'watchlist';
+const KEY = "watchlist";
 const listeners = new Set<() => void>();
 
 function read(): Movie[] {
   try {
-    return JSON.parse(localStorage.getItem(KEY) || '[]');
+    return JSON.parse(localStorage.getItem(KEY) || "[]");
   } catch {
     return [];
   }

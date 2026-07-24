@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import styled from "styled-components";
+import { Link } from "react-router-dom";
 
 export const Card = styled(Link)`
   display: block;
@@ -64,8 +64,11 @@ export const HeartButton = styled.button<{ $saved: boolean }>`
   justify-content: center;
   border-radius: ${({ theme }) => theme.radii.full};
   padding: 0.25rem;
-  transition: opacity 0.15s ease, background 0.15s ease;
-  background: ${({ $saved, theme }) => ($saved ? theme.colors.danger : theme.colors.overlay)};
+  transition:
+    opacity 0.15s ease,
+    background 0.15s ease;
+  background: ${({ $saved, theme }) =>
+    $saved ? theme.colors.danger : theme.colors.overlay};
   opacity: ${({ $saved }) => ($saved ? 1 : 0)};
 
   ${Card}:hover &,

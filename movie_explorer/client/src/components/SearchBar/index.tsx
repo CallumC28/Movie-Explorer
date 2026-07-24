@@ -1,10 +1,10 @@
-import { forwardRef } from 'react';
-import { Input } from './components';
-import type { Props } from './types/types';
+import { forwardRef } from "react";
+import { Input } from "./components";
+import type { Props } from "./types/types";
 
 const SearchBar = forwardRef<HTMLInputElement, Props>(function SearchBar(
-  { search, setSearch, placeholder = 'Search movies...' },
-  ref
+  { search, setSearch, placeholder = "Search movies..." },
+  ref,
 ) {
   return (
     <Input

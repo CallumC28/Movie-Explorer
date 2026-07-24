@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import Container from '@/components/Container';
+import styled from "styled-components";
+import Container from "@/components/Container";
 
 export const Main = styled.main`
   min-height: 100vh;
@@ -79,7 +79,9 @@ export const RemoveButton = styled.button`
   padding: 0.5rem;
   color: ${({ theme }) => theme.colors.onOverlay};
   opacity: 0;
-  transition: opacity 0.15s ease, background 0.15s ease;
+  transition:
+    opacity 0.15s ease,
+    background 0.15s ease;
 
   ${CardWrap}:hover &,
   &:focus-visible {

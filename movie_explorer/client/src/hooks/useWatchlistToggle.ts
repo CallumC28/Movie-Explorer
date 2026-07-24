@@ -1,6 +1,6 @@
-import { App } from 'antd';
-import { useWatchlist } from './useWatchlist';
-import type { Movie } from '@/api/types';
+import { App } from "antd";
+import { useWatchlist } from "./useWatchlist";
+import type { Movie } from "@/api/types";
 
 /**
  * The favourite action shared by the card and the detail page: whether a movie

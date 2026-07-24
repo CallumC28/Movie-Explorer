@@ -59,5 +59,5 @@ export interface MovieDetails extends Movie {
   credits?: { cast: CastMember[] };
   videos?: { results: Video[] };
   similar?: { results: Movie[] };
-  'watch/providers'?: { results: Record<string, ProviderRegion> };
+  "watch/providers"?: { results: Record<string, ProviderRegion> };
 }

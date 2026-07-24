@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import { Button } from 'antd';
+import styled from "styled-components";
+import { Button } from "antd";
 
 export const Panel = styled.div`
   position: sticky;
@@ -61,7 +61,7 @@ export const Field = styled.div<{ $wide?: boolean }>`
   flex-direction: column;
 
   ${({ theme }) => theme.bp.lg} {
-    grid-column: ${({ $wide }) => ($wide ? 'span 2 / span 2' : 'auto')};
+    grid-column: ${({ $wide }) => ($wide ? "span 2 / span 2" : "auto")};
   }
 `;
 

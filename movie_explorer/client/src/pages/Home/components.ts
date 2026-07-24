@@ -1,6 +1,6 @@
-import styled from 'styled-components';
-import { Button } from 'antd';
-import Container from '@/components/Container';
+import styled from "styled-components";
+import { Button } from "antd";
+import Container from "@/components/Container";
 
 export const Main = styled.main`
   min-height: 100vh;

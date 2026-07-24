@@ -1,5 +1,5 @@
-import { Skeleton } from 'antd';
-import styled from 'styled-components';
+import { Skeleton } from "antd";
+import styled from "styled-components";
 
 const Card = styled.div`
   background: ${({ theme }) => theme.colors.surface};
@@ -24,7 +24,11 @@ function SkeletonCard() {
     <Card aria-hidden="true">
       <Skeleton.Image active />
       <Body>
-        <Skeleton active title={{ width: '75%' }} paragraph={{ rows: 1, width: '50%' }} />
+        <Skeleton
+          active
+          title={{ width: "75%" }}
+          paragraph={{ rows: 1, width: "50%" }}
+        />
       </Body>
     </Card>
   );

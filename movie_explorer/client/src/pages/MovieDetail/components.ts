@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components';
+import styled, { css } from "styled-components";
 
 export const Main = styled.main`
   min-height: 100vh;
@@ -21,7 +21,8 @@ export const BackButton = styled.button<{ $onBackdrop: boolean }>`
   gap: 0.25rem;
   font-size: 0.875rem;
   font-weight: 500;
-  color: ${({ $onBackdrop, theme }) => ($onBackdrop ? theme.colors.onOverlay : theme.colors.text)};
+  color: ${({ $onBackdrop, theme }) =>
+    $onBackdrop ? theme.colors.onOverlay : theme.colors.text};
   transition: color 0.15s ease;
 
   &:hover {
@@ -56,13 +57,17 @@ export const HeroOverlay = styled.div`
   background: ${({ theme }) => theme.colors.overlay};
 
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
     height: 8rem;
-    background: linear-gradient(to top, ${({ theme }) => theme.colors.bg}, transparent);
+    background: linear-gradient(
+      to top,
+      ${({ theme }) => theme.colors.bg},
+      transparent
+    );
   }
 `;
 
@@ -74,7 +79,8 @@ export const HeroInner = styled.div<{ $onBackdrop: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 2.5rem;
-  color: ${({ $onBackdrop, theme }) => ($onBackdrop ? theme.colors.onOverlay : theme.colors.text)};
+  color: ${({ $onBackdrop, theme }) =>
+    $onBackdrop ? theme.colors.onOverlay : theme.colors.text};
 
   ${({ theme }) => theme.bp.md} {
     padding-top: 6rem;
@@ -335,7 +341,11 @@ export const SummaryFade = styled.div`
   left: 0;
   right: 0;
   height: 2.5rem;
-  background: linear-gradient(to top, ${({ theme }) => theme.colors.surface}, transparent);
+  background: linear-gradient(
+    to top,
+    ${({ theme }) => theme.colors.surface},
+    transparent
+  );
   pointer-events: none;
 `;
 
