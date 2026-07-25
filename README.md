@@ -2,7 +2,7 @@
 
 **Movie Explorer** is a modern React + TypeScript web app for discovering trending, top-rated, and lesser-known movies via the **TMDB (The Movie Database) API**.
 
-Built with **Ant Design** and **styled-components**, it features a dark/light theme, server-side filtering, infinite scrolling, a persistent watchlist, and AI-generated movie summaries powered by **OpenAI** (kept server-side via a Vercel serverless function — no keys in the browser).
+Built with **Ant Design** and **styled-components**, it features a dark/light theme, server-side filtering, infinite scrolling, a persistent watchlist, and AI-generated movie summaries powered by **OpenAI**. Both the TMDB and OpenAI keys stay server-side behind Vercel serverless proxies — no keys in the browser.
 
 ➤ **[Live Demo](https://movie-explorer-tau-lemon.vercel.app/)**
 
@@ -22,15 +22,15 @@ Built with **Ant Design** and **styled-components**, it features a dark/light th
 
 ## Tech Stack
 
-| Layer | Tech |
-|-------|------|
-| Frontend | React 18, TypeScript, React Router 6 |
-| UI | Ant Design 6, styled-components 6, react-icons |
-| Data fetching | TanStack Query 5, Axios |
-| APIs | [TMDB](https://developer.themoviedb.org/docs), [OpenAI](https://platform.openai.com/docs) |
-| Backend | Vercel serverless function (proxies OpenAI) |
-| Build | Vite 5 |
-| Hosting | Vercel |
+| Layer         | Tech                                                                                      |
+| ------------- | ----------------------------------------------------------------------------------------- |
+| Frontend      | React 18, TypeScript, React Router 6                                                      |
+| UI            | Ant Design 6, styled-components 6, react-icons                                            |
+| Data fetching | TanStack Query 5, Axios                                                                   |
+| APIs          | [TMDB](https://developer.themoviedb.org/docs), [OpenAI](https://platform.openai.com/docs) |
+| Backend       | Vercel serverless functions (proxy TMDB and OpenAI, keys server-side)                     |
+| Build         | Vite 5                                                                                    |
+| Hosting       | Vercel                                                                                    |
 
 ---
 
@@ -40,7 +40,9 @@ Built with **Ant Design** and **styled-components**, it features a dark/light th
 movie_explorer/
 ├── client/
 │   ├── api/
-│   │   └── summary.js         # Vercel serverless function — OpenAI proxy (key stays server-side)
+│   │   ├── summary.js         # Vercel serverless function — OpenAI proxy (rate-limited, key stays server-side)
+│   │   └── tmdb.js            # Vercel serverless function — TMDB proxy (key stays server-side)
+│   ├── public/                # robots.txt, sitemap.xml
 │   ├── src/
 │   │   ├── api/               # TMDB client, endpoints, shared types
 │   │   ├── components/        # Header, MovieCard, MovieGrid, FilterBar, SearchBar, ...
@@ -50,6 +52,7 @@ movie_explorer/
 │   │   ├── App.tsx
 │   │   └── main.tsx
 │   ├── index.html
+│   ├── vercel.json            # Security headers, SPA fallback, TMDB proxy rewrite
 │   ├── vite.config.ts
 │   └── tsconfig.json
 └── docs/                      # Design specs
@@ -59,18 +62,18 @@ movie_explorer/
 
 ## Environment Variables
 
-| Variable | Where | Purpose |
-|----------|-------|---------|
-| `VITE_TMDB_API_KEY` | `client/.env` | TMDB API key (client-side) |
-| `OPENAI_API_KEY` | Vercel project settings | OpenAI key, used only by the serverless function |
+| Variable         | Where                                   | Purpose                                                                |
+| ---------------- | --------------------------------------- | ---------------------------------------------------------------------- |
+| `TMDB_API_KEY`   | `client/.env` + Vercel project settings | TMDB key, used only by the TMDB proxy (and the vite dev proxy locally) |
+| `OPENAI_API_KEY` | Vercel project settings                 | OpenAI key, used only by the summary function                          |
 
 Create `client/.env` with:
 
 ```
-VITE_TMDB_API_KEY=your_tmdb_api_key
+TMDB_API_KEY=your_tmdb_api_key
 ```
 
-The OpenAI key is **not** a `VITE_` variable — it's read by `client/api/summary.js` on the server, so it's never bundled into the client.
+Neither key uses a `VITE_` prefix — both are read server-side (or by the vite dev proxy at startup), so they're never bundled into the client. All browser TMDB traffic goes through `/api/tmdb`, and `/api/summary` is rate-limited (10 req/min per IP) to prevent abuse.
 
 ---
 
@@ -84,7 +87,7 @@ npm run dev
 
 Other scripts: `npm run build` (type-check + production build), `npm run typecheck`.
 
-> AI summaries require the serverless function, so they only work when deployed to Vercel (or via `vercel dev`) with `OPENAI_API_KEY` set. Everything else runs with just the TMDB key.
+> In local dev, TMDB requests are handled by a vite proxy that reads `TMDB_API_KEY` from `client/.env`. AI summaries require the serverless function, so they only work when deployed to Vercel (or via `vercel dev`) with `OPENAI_API_KEY` set.
 
 ---
 
