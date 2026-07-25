@@ -1,15 +1,10 @@
-import axios from "axios";
+import axios from 'axios';
 
-const apiKey = import.meta.env.VITE_TMDB_API_KEY;
-
-if (!apiKey) {
-  console.warn("VITE_TMDB_API_KEY is not set — TMDB requests will fail.");
-}
-
+// All TMDB traffic goes through /api/tmdb so the API key stays server-side
+// (Vercel function in prod, vite dev proxy locally).
 export const tmdb = axios.create({
-  baseURL: "https://api.themoviedb.org/3",
+  baseURL: '/api/tmdb',
   params: {
-    api_key: apiKey,
-    language: "en-US",
+    language: 'en-US',
   },
 });

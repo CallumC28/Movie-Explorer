@@ -4,7 +4,48 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Movie Explorer</title>
+    <meta
+      name="description"
+      content="Discover trending, top-rated, and hidden-gem movies powered by TMDB, with AI-generated spoiler-free summaries. Search, filter, and build your watchlist."
+    />
+    <link rel="canonical" href="https://movie-explorer-tau-lemon.vercel.app/" />
     <link rel="icon" type="image/x-icon" href="/src/styles/favicon.ico" />
+
+    <!-- Open Graph (link previews on LinkedIn, Discord, etc.) -->
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:url"
+      content="https://movie-explorer-tau-lemon.vercel.app/"
+    />
+    <meta property="og:site_name" content="Movie Explorer" />
+    <meta property="og:title" content="Movie Explorer" />
+    <meta
+      property="og:description"
+      content="Discover trending, top-rated, and hidden-gem movies with AI-generated spoiler-free summaries."
+    />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Movie Explorer" />
+    <meta
+      name="twitter:description"
+      content="Discover trending, top-rated, and hidden-gem movies with AI-generated spoiler-free summaries."
+    />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Movie Explorer",
+        "url": "https://movie-explorer-tau-lemon.vercel.app/",
+        "applicationCategory": "EntertainmentApplication",
+        "operatingSystem": "Any",
+        "description": "Discover trending, top-rated, and hidden-gem movies powered by TMDB, with AI-generated spoiler-free summaries.",
+        "author": {
+          "@type": "Person",
+          "name": "Callum Cummins",
+          "url": "https://callumcummins.com/"
+        }
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
